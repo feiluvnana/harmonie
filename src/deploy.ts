@@ -9,10 +9,10 @@ async function deploy() {
   const commandsFolder = path.resolve(__dirname, "commands");
   await Promise.all(
     fs.readdirSync(commandsFolder).map(async (file) => {
-      if (file.endsWith(".ts") && file !== "index.ts" && file !== "types.ts") {
+      if (file.endsWith(".ts") && file !== "index.ts" && file !== "types.d.ts") {
         const filePath = path.resolve(commandsFolder, file);
-        const command = await import(filePath);
-        commands.push(command.default);
+        const command = await import(filePath).then((module) => module.default);
+        commands.push(command);
       }
     })
   );

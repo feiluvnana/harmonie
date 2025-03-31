@@ -1,5 +1,5 @@
 {
-  "name": "playground",
+  "name": "harmonie",
   "packageManager": "yarn@4.8.1",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts",

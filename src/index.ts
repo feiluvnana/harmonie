@@ -21,7 +21,7 @@ async function bootstrap() {
     await Promise.all(
       fs.readdirSync(commandsFolder).map(async (file) => {
         if (file.endsWith(".ts") && file !== "types.d.ts") {
-          const command: Command = await import(path.resolve(commandsFolder, file));
+          const command: Command = await import(path.resolve(commandsFolder, file)).then((module) => module.default);
           client.commands.set(command.builder.name, command);
           console.log(`Loaded command: ${command.builder.name}`);
         }
@@ -29,12 +29,12 @@ async function bootstrap() {
     );
 
     client.events = new Collection<string, Event>();
-    const eventsFolder = path.resolve(__dirname);
+    const eventsFolder = path.resolve(__dirname, "events");
     await Promise.all(
       fs.readdirSync(eventsFolder).map(async (file) => {
         if (file.endsWith(".ts") && file !== "types.d.ts") {
-          const event: Event = await import(path.resolve(eventsFolder, file));
-          client.events.set(event.name, event);
+          const event: Event = await import(path.resolve(eventsFolder, file)).then((module) => module.default);
+          client.events.set(event.name.toString(), event);
           if (event.once) {
             client.once(event.name.toString(), (...args) => event.execute(client, ...args));
           } else {

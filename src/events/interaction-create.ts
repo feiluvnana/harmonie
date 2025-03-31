@@ -23,3 +23,5 @@ const event: Event = {
     }
   },
 };
+
+export default event;
