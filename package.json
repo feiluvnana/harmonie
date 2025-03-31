@@ -1,0 +1,23 @@
+{
+  "name": "playground",
+  "packageManager": "yarn@4.8.1",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "prod": "tsc ./src/index.ts && node ./dist/index.js",
+    "deploy": "ts-node ./src/deploy.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.28.0"
+  },
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7"
+  }
+}
