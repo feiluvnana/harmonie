@@ -1,12 +1,26 @@
+import "reflect-metadata";
+
 import { Client, Collection, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import { Command } from "./commands/types";
 import { Event } from "./events/types";
+import { Service } from "./services/types";
 
 async function bootstrap() {
   try {
+    console.log("Starting bot...");
+    await Promise.all(
+      fs.readdirSync(path.resolve(__dirname, "services")).map(async (file) => {
+        if (file.endsWith(".ts") && file !== "types.d.ts") {
+          const service: Service = await import(path.resolve(__dirname, "services", file)).then((module) => module);
+          await service.initialize();
+          console.log(`Loaded service: ${file}`);
+        }
+      })
+    );
+
     const client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
@@ -34,19 +48,20 @@ async function bootstrap() {
       fs.readdirSync(eventsFolder).map(async (file) => {
         if (file.endsWith(".ts") && file !== "types.d.ts") {
           const event: Event = await import(path.resolve(eventsFolder, file)).then((module) => module.default);
-          client.events.set(event.name.toString(), event);
-          if (event.once) {
-            client.once(event.name.toString(), (...args) => event.execute(client, ...args));
-          } else {
-            client.on(event.name.toString(), (...args) => event.execute(client, ...args));
+          if (event.name) {
+            client.events.set(event.name.toString(), event);
+            if (event.once) {
+              client.once(event.name.toString(), (...args) => event.execute(...args));
+            } else {
+              client.on(event.name.toString(), (...args) => event.execute(...args));
+            }
+            console.log(`Loaded event: ${event.name}`);
           }
-          console.log(`Loaded event: ${event.name}`);
         }
       })
     );
 
     await client.login(process.env.DISCORD_TOKEN);
-    console.log("Bot is ready!");
   } catch (error) {
     console.log("Error starting bot:", error);
   }
