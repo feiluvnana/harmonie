@@ -6,5 +6,4 @@ export let DBService: MikroORM<MySqlDriver, EntityManager>;
 
 export async function initialize() {
   DBService = await MikroORM.init<MySqlDriver, EntityManager>(config);
-  await DBService.getSchemaGenerator().refreshDatabase();
 }

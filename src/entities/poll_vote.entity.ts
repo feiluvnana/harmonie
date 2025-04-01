@@ -1,10 +1,12 @@
-import { Entity, ManyToOne, PrimaryKey, Property, sql } from "@mikro-orm/core";
+import { Entity, ManyToOne, OptionalProps, PrimaryKey, Property, sql } from "@mikro-orm/core";
 import { PollOption } from "./poll_option.entity";
 
 @Entity()
 export class PollVote {
-  @PrimaryKey({ type: "uuid", nullable: false })
-  declare id: string;
+  [OptionalProps]?: "id" | "option" | "createdAt" | "updatedAt";
+
+  @PrimaryKey({ nullable: false })
+  declare id: number;
 
   @Property({ nullable: false })
   declare userId: string;
@@ -15,6 +17,6 @@ export class PollVote {
   @Property({ default: sql.now() })
   declare createdAt: Date;
 
-  @Property({ default: sql.now(), onUpdate: () => sql.now() })
+  @Property({ default: sql.now(), onUpdate: () => new Date() })
   declare updatedAt: Date;
 }

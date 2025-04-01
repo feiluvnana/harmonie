@@ -1,10 +1,12 @@
-import { Entity, ManyToOne, PrimaryKey, Property, sql } from "@mikro-orm/core";
+import { Entity, ManyToOne, OptionalProps, PrimaryKey, Property, sql } from "@mikro-orm/core";
 import { Poll } from "discord.js";
 
 @Entity()
 export class PollPermission {
-  @PrimaryKey({ type: "uuid", nullable: false })
-  declare id: string;
+  [OptionalProps]?: "id" | "poll" | "createdAt" | "updatedAt";
+
+  @PrimaryKey({ nullable: false })
+  declare id: number;
 
   @ManyToOne({ entity: () => Poll, nullable: false, updateRule: "cascade", deleteRule: "cascade" })
   declare poll: Poll;
@@ -21,6 +23,6 @@ export class PollPermission {
   @Property({ default: sql.now() })
   declare createdAt: Date;
 
-  @Property({ default: sql.now(), onUpdate: () => sql.now() })
+  @Property({ default: sql.now(), onUpdate: () => new Date() })
   declare updatedAt: Date;
 }

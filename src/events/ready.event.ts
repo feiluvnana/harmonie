@@ -5,7 +5,7 @@ const event: Event = {
   name: Events.ClientReady,
   once: true,
   execute: async (client: Client) => {
-    console.log(`Ready! Logged in as ${client.user?.tag}.`);
+    console.log(`[Event] ${Events.ClientReady} đã được kích hoạt.`);
   },
 };
 

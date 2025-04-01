@@ -1,19 +1,28 @@
-import { Cascade, Entity, OneToMany, OptionalProps, PrimaryKey, Property, sql } from "@mikro-orm/core";
+import { Cascade, Collection, Entity, OneToMany, OptionalProps, PrimaryKey, Property, sql } from "@mikro-orm/core";
 import { PollStatus } from "../core/enums";
 import { PollOption } from "./poll_option.entity";
 
 @Entity()
 export class Poll {
-  [OptionalProps]?: "options" | "anonymous" | "multiple" | "endsAt" | "status" | "createdAt" | "updatedAt";
+  [OptionalProps]?:
+    | "id"
+    | "options"
+    | "anonymous"
+    | "messageId"
+    | "multiple"
+    | "endsAt"
+    | "status"
+    | "createdAt"
+    | "updatedAt";
 
-  @PrimaryKey({ type: "uuid", nullable: false })
-  declare id: string;
+  @PrimaryKey({ nullable: false })
+  declare id: number;
 
   @Property({ nullable: false })
   declare question: string;
 
   @OneToMany({ entity: () => PollOption, mappedBy: (option) => option.poll, cascade: [Cascade.ALL] })
-  declare options: PollOption[];
+  declare options: Collection<PollOption>;
 
   @Property({ nullable: false })
   declare userId: string;
@@ -22,7 +31,10 @@ export class Poll {
   declare guildId: string;
 
   @Property({ nullable: false })
-  declare messageId: string;
+  declare channelId: string;
+
+  @Property({ nullable: true })
+  declare messageId?: string;
 
   @Property({ nullable: false, default: true })
   declare anonymous: boolean;
@@ -48,6 +60,6 @@ export class Poll {
   @Property({ default: sql.now() })
   declare createdAt: Date;
 
-  @Property({ default: sql.now(), onUpdate: () => sql.now() })
+  @Property({ default: sql.now(), onUpdate: () => new Date() })
   declare updatedAt: Date;
 }

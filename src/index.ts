@@ -10,13 +10,14 @@ import { Service } from "./services/types";
 
 async function bootstrap() {
   try {
-    console.log("Starting bot...");
+    console.log("[Index] Đang khởi chạy Harmonie...");
     await Promise.all(
       fs.readdirSync(path.resolve(__dirname, "services")).map(async (file) => {
         if (file.endsWith(".ts") && file !== "types.d.ts") {
+          console.log(`[Index] Đang tải service: ${file}`);
           const service: Service = await import(path.resolve(__dirname, "services", file)).then((module) => module);
           await service.initialize();
-          console.log(`Loaded service: ${file}`);
+          console.log(`[Index] Đã tải service: ${file}`);
         }
       })
     );
@@ -35,9 +36,10 @@ async function bootstrap() {
     await Promise.all(
       fs.readdirSync(commandsFolder).map(async (file) => {
         if (file.endsWith(".ts") && file !== "types.d.ts") {
+          console.log(`[Index] Đang tải command: ${file}`);
           const command: Command = await import(path.resolve(commandsFolder, file)).then((module) => module.default);
           client.commands.set(command.builder.name, command);
-          console.log(`Loaded command: ${command.builder.name}`);
+          console.log(`[Index] Đã tải command: ${command.builder.name}`);
         }
       })
     );
@@ -49,13 +51,14 @@ async function bootstrap() {
         if (file.endsWith(".ts") && file !== "types.d.ts") {
           const event: Event = await import(path.resolve(eventsFolder, file)).then((module) => module.default);
           if (event.name) {
+            console.log(`[Index] Đang tải event: ${event.name}`);
             client.events.set(event.name.toString(), event);
             if (event.once) {
               client.once(event.name.toString(), (...args) => event.execute(...args));
             } else {
               client.on(event.name.toString(), (...args) => event.execute(...args));
             }
-            console.log(`Loaded event: ${event.name}`);
+            console.log(`[Index] Đã tải event: ${event.name}`);
           }
         }
       })
@@ -63,7 +66,7 @@ async function bootstrap() {
 
     await client.login(process.env.DISCORD_TOKEN);
   } catch (error) {
-    console.log("Error starting bot:", error);
+    console.error("[Index] Lỗi khởi chạy Harmonie:", error);
   }
 }
 

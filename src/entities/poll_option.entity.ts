@@ -1,19 +1,29 @@
-import { Cascade, Entity, ManyToOne, OneToMany, OptionalProps, PrimaryKey, Property, sql } from "@mikro-orm/core";
+import {
+  Cascade,
+  Collection,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OptionalProps,
+  PrimaryKey,
+  Property,
+  sql,
+} from "@mikro-orm/core";
 import { Poll } from "./poll.entity";
 import { PollVote } from "./poll_vote.entity";
 
 @Entity()
 export class PollOption {
-  [OptionalProps]?: "poll" | "votes" | "count" | "createdAt" | "updatedAt";
+  [OptionalProps]?: "id" | "poll" | "votes" | "count" | "createdAt" | "updatedAt";
 
-  @PrimaryKey({ type: "uuid", nullable: false })
-  declare id: string;
+  @PrimaryKey({ nullable: false })
+  declare id: number;
 
   @ManyToOne({ entity: () => Poll, nullable: false, deleteRule: "cascade", updateRule: "cascade" })
   declare poll: Poll;
 
   @OneToMany({ entity: () => PollVote, mappedBy: (vote) => vote.option, cascade: [Cascade.ALL] })
-  declare votes: PollVote[];
+  declare votes: Collection<PollVote>;
 
   @Property({ nullable: false })
   declare option: string;
@@ -27,6 +37,6 @@ export class PollOption {
   @Property({ default: sql.now() })
   declare createdAt: Date;
 
-  @Property({ default: sql.now(), onUpdate: () => sql.now() })
+  @Property({ default: sql.now(), onUpdate: () => new Date() })
   declare updatedAt: Date;
 }
