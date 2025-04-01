@@ -1,9 +1,11 @@
-import { Cascade, Entity, OneToMany, PrimaryKey, Property, sql } from "@mikro-orm/core";
+import { Cascade, Entity, OneToMany, OptionalProps, PrimaryKey, Property, sql } from "@mikro-orm/core";
 import { PollStatus } from "../core/enums";
 import { PollOption } from "./poll_option.entity";
 
 @Entity()
 export class Poll {
+  [OptionalProps]?: "options" | "anonymous" | "multiple" | "endsAt" | "status" | "createdAt" | "updatedAt";
+
   @PrimaryKey({ type: "uuid", nullable: false })
   declare id: string;
 

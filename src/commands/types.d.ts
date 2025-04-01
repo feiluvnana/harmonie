@@ -1,6 +1,6 @@
 import {
+  ChatInputCommandInteraction,
   Collection,
-  CommandInteraction,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
   SlashCommandSubcommandsOnlyBuilder,
@@ -8,7 +8,7 @@ import {
 
 export interface Command {
   builder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandOptionsOnlyBuilder;
-  execute: (interaction: CommandInteraction) => Promise<void>;
+  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 }
 
 declare module "discord.js" {
